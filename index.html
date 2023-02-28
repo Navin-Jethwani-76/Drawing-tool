@@ -7,10 +7,20 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
     <div id="canvas">
-        <div id="editorStartingText_moleced_I1" style="position: absolute; left: 150px; width: 300px; top: 200px; font-family: Verdana; font-style: normal; font-size: 16px; font-weight: bold; color: rgb(121, 121, 121); text-align: center; transform: translate(0px, -50%);"><span>Click and drag to start drawing a structure.</span></div>
+      <div id="editorStartingText_moleced_I1">
+        <span id="text">Click and drag to start drawing a structure.</span>
+      </div>
       <svg id="drawing-board"></svg>
+    </div>
+    <div id="switch">
+      <label for="mode-select">Mode:</label>
+      <select id="mode-select">
+        <option value="pencil">Pencil</option>
+        <option value="eraser">Eraser</option>
+      </select>
     </div>
   </body>
   <script src="script.js"></script>
