@@ -1,20 +1,4 @@
-body{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#canvas {
-  background-color: #fff;
-  position: absolute;
-  top: 0;
-  left: 0;
-  border: 1px solid black;
-  width: 600px;
-  height: 400px;
-  margin-top: 150px;
-  margin-left: 150px;
-}
-#editorStartingText_moleced_I1 {
+.svg-wrap > span{
   position: absolute;
   left: 150px;
   width: 300px;
@@ -27,15 +11,22 @@ body{
   text-align: center;
   transform: translate(0px, -50%);
 }
-#drawing-board {
-  width: 100%;
-  height: 100%;
-  position: absolute;
+.svg-wrap > span{
+  user-select: none;
+}
+svg{
+  /* position: fixed; */
   top: 0;
   left: 0;
+  height: 400px;
+  width: 600px;
+  border: 1px solid black;
 }
-#switch{
-  width: fit-content;
-  margin-top: 200px;
-  margin-left: 150px;
+svg > line{
+  stroke:rgb(0,0,0);
+  stroke-width:2;
+  stroke-linecap: round;
+}
+.highlight{
+  stroke: red;
 }
