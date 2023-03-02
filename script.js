@@ -45,20 +45,12 @@ class Draw {
   }
 
   getPerpendicularDistance(x, y, x1, y1, x2, y2) {
-    const slope = (y2 - y1) / (x2 - x1);
-    const yIntercept = y1 - slope * x1;
-    const perpendicularSlope = -1 / slope;
-    const midX = (x1 + x2) / 2;
-    const midY = (y1 + y2) / 2;
-    const perpendicularYIntercept = midY - perpendicularSlope * midX;
-    const intersectionX =
-      (perpendicularYIntercept - yIntercept) / (slope - perpendicularSlope);
-    const intersectionY = slope * intersectionX + yIntercept;
-    const distance = Math.sqrt(
-      Math.pow(x - intersectionX, 2) + Math.pow(y - intersectionY, 2)
-    );
-    return distance;
-  }
+      const A = y2 - y1;
+      const B = x1 - x2;
+      const C = (y1*x2) - (x1*y2);
+      const distance = Math.abs((A*x) + (B*y) + C) / Math.sqrt((A*A) + (B*B));
+      return distance;
+    }
   startShape(x, y) {
     this.currentShape = new Shape(x, y);
     this.element.appendChild(this.currentShape.element);
