@@ -30,3 +30,11 @@ svg > line{
 .highlight{
   stroke: red;
 }
+.switch img{
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
+}
+.clicked{
+  background-color: gray;
+}

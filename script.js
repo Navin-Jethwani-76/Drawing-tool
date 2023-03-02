@@ -3,22 +3,54 @@ class Draw {
     this.element = document.getElementById(id);
     this.shapes = [];
     this.currentShape = null;
-    this.mode = "pencil";
+    this.mode = "popup";
 
-    const selectTag = document.getElementById("mode-select");
-    selectTag.addEventListener("change", (event) => {
-      this.mode = event.target.value;
+    const pencilSelect = document.getElementById("pencil-select");
+    pencilSelect.addEventListener("click", () => {
+
+      if(eraseSelect.classList.contains('clicked')){
+        eraseSelect.classList.remove('clicked');
+      }
+
+      if (this.mode == "draw"){
+        this.mode = "popup";
+        pencilSelect.classList.remove('clicked');
+      }
+      else{
+        this.mode = "draw";
+        console.log(`mode -> ${this.mode}`);
+        pencilSelect.classList.add('clicked');
+      }
+      
+    });
+    const eraseSelect = document.getElementById("eraser-select");
+    eraseSelect.addEventListener("click", () => {
+
+      if (pencilSelect.classList.contains('clicked')){
+        pencilSelect.classList.remove('clicked');
+      }
+
+      if (this.mode == "eraser"){
+        this.mode = "popup";
+        eraseSelect.classList.remove('clicked');
+      }
+      else{
+        this.mode = "eraser";
+        console.log(`mode -> ${this.mode}`);
+        eraseSelect.classList.add('clicked');
+      }
     });
 
+
     this.element.addEventListener("mousedown", (event) => {
-      if (this.mode === "pencil") {
+      if (this.mode === "draw") {
         this.startShape(event.offsetX, event.offsetY);
       } else if (this.mode === "eraser") {
         this.eraseShapes(event.offsetX, event.offsetY);
       }
     });
     this.element.addEventListener("mousemove", (event) => {
-      if (this.mode === "pencil") {
+      if (this.mode === "draw") {
         this.updateShape(event.offsetX, event.offsetY);
       } else if (this.mode === "eraser") {
         this.highlightLines(event.offsetX, event.offsetY);
