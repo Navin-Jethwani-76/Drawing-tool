@@ -75,10 +75,10 @@ class Draw {
       const x2 = Number(element.getAttribute("x2"));
       const y2 = Number(element.getAttribute("y2"));
       const distance = this.getPerpendicularDistance(x, y, x1, y1, x2, y2);
-      console.log(distance);
+      //console.log(distance);
       if (distance <= 20) {
         shapeElementsToRemove.push(shape.element);
-        console.log(shapeElementsToRemove);
+        //console.log(shapeElementsToRemove);
       }
     }
 
