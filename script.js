@@ -4,6 +4,9 @@ class Draw {
     this.shapes = [];
     this.currentShape = null;
     this.mode = "popup";
+    this.iconPopup = document.getElementById('icon-popup');
+		this.selectedIcon = '';
+
 
     const pencilSelect = document.getElementById("pencil-select");
     pencilSelect.addEventListener("click", () => {
@@ -48,6 +51,9 @@ class Draw {
       } else if (this.mode === "eraser") {
         this.eraseShapes(event.offsetX, event.offsetY);
       }
+      else{
+        this.toggleIconPopup();
+      }
     });
     this.element.addEventListener("mousemove", (event) => {
       if (this.mode === "draw") {
@@ -59,7 +65,26 @@ class Draw {
     this.element.addEventListener("mouseup", (event) => {
       this.endShape();
     });
+
+    document.querySelectorAll('.icon').forEach((icon) => {
+			icon.addEventListener('click', this.selectIcon);
+		});
   }
+  
+  
+  
+  // Function to handle icon selection
+  selectIcon(event) {
+    this.selectedIcon = event.target.dataset.icon;
+    console.log(this.selectedIcon);
+    this.toggleIconPopup();
+  }
+  // Function to show/hide the icon popup
+  toggleIconPopup() {
+    this.iconPopup.classList.toggle('show');
+  }
+    
+  
   highlightLines(x, y) {
     for (const shape of this.shapes) {
       const element = shape.element;
@@ -122,6 +147,7 @@ class Draw {
       }
     }
   }
+
 }
 
 class Shape {
