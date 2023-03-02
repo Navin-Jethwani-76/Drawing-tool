@@ -52,7 +52,7 @@ class Draw {
         this.eraseShapes(event.offsetX, event.offsetY);
       }
       else{
-        this.toggleIconPopup();
+        this.iconPopup.classList.toggle('show');
       }
     });
     this.element.addEventListener("mousemove", (event) => {
@@ -67,23 +67,14 @@ class Draw {
     });
 
     document.querySelectorAll('.icon').forEach((icon) => {
-			icon.addEventListener('click', this.selectIcon);
+			icon.addEventListener('click', (event)=>{
+        this.selectedIcon = event.target.getAttribute('src');
+        console.log(this.selectedIcon);
+        this.iconPopup.classList.toggle('show');
+      });
 		});
   }
   
-  
-  
-  // Function to handle icon selection
-  selectIcon(event) {
-    this.selectedIcon = event.target.dataset.icon;
-    console.log(this.selectedIcon);
-    this.toggleIconPopup();
-  }
-  // Function to show/hide the icon popup
-  toggleIconPopup() {
-    this.iconPopup.classList.toggle('show');
-  }
-    
   
   highlightLines(x, y) {
     for (const shape of this.shapes) {
@@ -102,12 +93,31 @@ class Draw {
   }
 
   getPerpendicularDistance(x, y, x1, y1, x2, y2) {
-      const A = y2 - y1;
-      const B = x1 - x2;
-      const C = (y1*x2) - (x1*y2);
-      const distance = Math.abs((A*x) + (B*y) + C) / Math.sqrt((A*A) + (B*B));
-      return distance;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const length = Math.sqrt(dx * dx + dy * dy);
+    const dotProduct = (x - x1) * (x2 - x1) + (y - y1) * (y2 - y1);
+    const projection = dotProduct / (length * length);
+  
+    let distance;
+    //if projection is before line
+    if (projection < 0) {
+      distance = Math.sqrt((x - x1) * (x - x1) + (y - y1) * (y - y1));
     }
+    //if projection is after line
+    else if (projection > 1) {
+      distance = Math.sqrt((x - x2) * (x - x2) + (y - y2) * (y - y2));
+    }
+    //if projection is on the line
+    else {
+      const projectionX = x1 + projection * (x2 - x1);
+      const projectionY = y1 + projection * (y2 - y1);
+      distance = Math.sqrt((x - projectionX) * (x - projectionX) + (y - projectionY) * (y - projectionY));
+    }
+  
+    return distance;
+  }
+  
   startShape(x, y) {
     this.currentShape = new Shape(x, y);
     this.element.appendChild(this.currentShape.element);
