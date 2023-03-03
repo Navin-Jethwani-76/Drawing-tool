@@ -55,6 +55,7 @@ class Draw {
         this.iconPopup.classList.toggle('show');
       }
     });
+
     this.element.addEventListener("mousemove", (event) => {
       if (this.mode === "draw") {
         this.updateShape(event.offsetX, event.offsetY);
@@ -64,6 +65,7 @@ class Draw {
     });
     this.element.addEventListener("mouseup", (event) => {
       this.endShape();
+      this.deleteShortLines();
     });
 
     document.querySelectorAll('.icon').forEach((icon) => {
@@ -75,7 +77,21 @@ class Draw {
 		});
   }
   
-  
+  deleteShortLines() {
+  const lines = this.element.querySelectorAll("line");
+  lines.forEach(line => {
+    const x1 = parseInt(line.getAttribute("x1"));
+    const y1 = parseInt(line.getAttribute("y1"));
+    const x2 = parseInt(line.getAttribute("x2"));
+    const y2 = parseInt(line.getAttribute("y2"));
+    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    if (length < 2) {
+      line.remove();
+      this.iconPopup.classList.toggle('show');
+    }
+  });
+}
+
   highlightLines(x, y) {
     for (const shape of this.shapes) {
       const element = shape.element;
