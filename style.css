@@ -62,5 +62,8 @@ svg > line{
   height: 50px;
   margin: 5px;
   cursor: pointer;
-  background-color: #ccc;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

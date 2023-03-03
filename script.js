@@ -3,6 +3,7 @@ class Draw {
     this.element = document.getElementById(id);
     this.shapes = [];
     this.currentShape = null;
+    this.boardText = document.getElementById("board-text");
     this.mode = "popup";
     this.iconPopup = document.getElementById('icon-popup');
 		this.selectedIcon = '';
@@ -53,6 +54,7 @@ class Draw {
       }
       else{
         this.iconPopup.classList.toggle('show');
+        this.openIconPopup(event.pageX, event.pageY);
       }
     });
 
@@ -65,31 +67,58 @@ class Draw {
     });
     this.element.addEventListener("mouseup", (event) => {
       this.endShape();
-      this.deleteShortLines();
+      this.deleteShortLines(event);
     });
 
     document.querySelectorAll('.icon').forEach((icon) => {
 			icon.addEventListener('click', (event)=>{
-        this.selectedIcon = event.target.getAttribute('src');
+        this.selectedIcon = event.target;
+        this.addElementOnBoard(event)
         console.log(this.selectedIcon);
         this.iconPopup.classList.toggle('show');
+
       });
 		});
   }
   
-  deleteShortLines() {
-  const lines = this.element.querySelectorAll("line");
-  lines.forEach(line => {
-    const x1 = parseInt(line.getAttribute("x1"));
-    const y1 = parseInt(line.getAttribute("y1"));
-    const x2 = parseInt(line.getAttribute("x2"));
-    const y2 = parseInt(line.getAttribute("y2"));
-    const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    if (length < 2) {
-      line.remove();
-      this.iconPopup.classList.toggle('show');
+  deleteShortLines(event) {
+    const shapeElementsToRemove = [];
+    for (const shape of this.shapes) {
+      const element = shape.element;
+      const x1 = Number(element.getAttribute("x1"));
+      const y1 = Number(element.getAttribute("y1"));
+      const x2 = Number(element.getAttribute("x2"));
+      const y2 = Number(element.getAttribute("y2"));
+      const distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+      if (distance <= 2) {
+        shapeElementsToRemove.push(shape.element);
+        if(distance === 0){
+          this.iconPopup.classList.toggle('show');
+          console.log(event.pageX,event.pageY);
+          this.openIconPopup(event.pageX, event.pageY);
+        }
+      }
     }
-  });
+    for (const element of shapeElementsToRemove) {
+      element.remove();
+      const index = this.shapes.findIndex(shape => shape.element === element);
+      if (index !== -1) {
+        this.shapes.splice(index, 1);
+      }
+    }
+  }
+
+
+addElementOnBoard(event){
+  const newElement = `<div class = 'element' style = "left: ${event.pageX}px; top: ${event.pageY}px"> ${this.selectedIcon.textContent} </div>`;
+  this.boardText.setAttribute("style", "display: none;");
+  this.element.innerHTML += newElement;
+}
+
+openIconPopup(x, y) {
+  // Set the position of the icon popup
+  this.iconPopup.style.left = (x+110) + "px";
+  this.iconPopup.style.top = (y) + "px";
 }
 
   highlightLines(x, y) {
@@ -196,11 +225,11 @@ class Shape {
       const y2Other = lines[i].getAttribute("y2");
       const distanceStart = Math.sqrt((x - x1Other) ** 2 + (y - y1Other) ** 2);
       const distanceEnd = Math.sqrt((x - x2Other) ** 2 + (y - y2Other) ** 2);
-      if (distanceStart <= 10) {
+      if (distanceStart <= 2) {
         this.element.setAttribute("x1", x1Other);
         this.element.setAttribute("y1", y1Other);
       }
-      if (distanceEnd <= 10) {
+      if (distanceEnd <= 2) {
         this.element.setAttribute("x1", x2Other);
         this.element.setAttribute("y1", y2Other);
       }
@@ -219,11 +248,11 @@ class Shape {
       const y2Other = lines[i].getAttribute("y2");
       const distanceStart = Math.sqrt((x - x1Other) ** 2 + (y - y1Other) ** 2);
       const distanceEnd = Math.sqrt((x - x2Other) ** 2 + (y - y2Other) ** 2);
-      if (distanceStart <= 10) {
+      if (distanceStart <= 2) {
         this.element.setAttribute("x2", x1Other);
         this.element.setAttribute("y2", y1Other);
       }
-      if (distanceEnd <= 10) {
+      if (distanceEnd <= 2) {
         this.element.setAttribute("x2", x2Other);
         this.element.setAttribute("y2", y2Other);
       }
