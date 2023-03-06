@@ -4,56 +4,65 @@ class Draw {
     this.shapes = [];
     this.currentShape = null;
     this.boardText = document.getElementById("board-text");
+
     this.mode = "popup";
-    this.iconPopup = document.getElementById('icon-popup');
-		this.selectedIcon = '';
+    this.iconPopup = document.getElementById("icon-popup");
+    this.selectedIcon = "";
 
-
+    this.x;
+    this.y;
     const pencilSelect = document.getElementById("pencil-select");
     pencilSelect.addEventListener("click", () => {
-
-      if(eraseSelect.classList.contains('clicked')){
-        eraseSelect.classList.remove('clicked');
+      if (eraseSelect.classList.contains("clicked")) {
+        eraseSelect.classList.remove("clicked");
+        this.element.setAttribute("style", `cursor: default`);
       }
 
-      if (this.mode == "draw"){
+      if (this.mode == "draw") {
         this.mode = "popup";
-        pencilSelect.classList.remove('clicked');
-      }
-      else{
+        pencilSelect.classList.remove("clicked");
+        this.element.setAttribute("style", `cursor: default`);
+      } else {
         this.mode = "draw";
-        console.log(`mode -> ${this.mode}`);
-        pencilSelect.classList.add('clicked');
+        pencilSelect.classList.add("clicked");
+        this.element.setAttribute(
+          "style",
+          `cursor: url(icons/pencil.svg), auto`
+        );
       }
-      
     });
     const eraseSelect = document.getElementById("eraser-select");
     eraseSelect.addEventListener("click", () => {
-
-      if (pencilSelect.classList.contains('clicked')){
-        pencilSelect.classList.remove('clicked');
+      if (pencilSelect.classList.contains("clicked")) {
+        pencilSelect.classList.remove("clicked");
+        this.element.setAttribute("style", `cursor: default`);
       }
 
-      if (this.mode == "eraser"){
+      if (this.mode == "eraser") {
         this.mode = "popup";
-        eraseSelect.classList.remove('clicked');
-      }
-      else{
+        eraseSelect.classList.remove("clicked");
+        this.element.setAttribute("style", `cursor: default`);
+      } else {
         this.mode = "eraser";
-        console.log(`mode -> ${this.mode}`);
-        eraseSelect.classList.add('clicked');
+
+        eraseSelect.classList.add("clicked");
+        this.element.setAttribute(
+          "style",
+          `cursor: url(icons/eraser.svg), auto`
+        );
       }
     });
 
-
     this.element.addEventListener("mousedown", (event) => {
-      if (this.mode === "draw") {
+      if (this.mode === "draw" && event.button === 0) {
         this.startShape(event.offsetX, event.offsetY);
-      } else if (this.mode === "eraser") {
+      } else if (this.mode === "eraser" && event.button === 0) {
         this.eraseShapes(event.offsetX, event.offsetY);
-      }
-      else{
-        this.iconPopup.classList.toggle('show');
+        this.removeElements();
+      } else {
+        this.iconPopup.classList.toggle("show");
+        this.x = event.pageX;
+        this.y = event.pageY;
         this.openIconPopup(event.pageX, event.pageY);
       }
     });
@@ -67,59 +76,19 @@ class Draw {
     });
     this.element.addEventListener("mouseup", (event) => {
       this.endShape();
-      this.deleteShortLines(event);
+      this.deleteShortLine(event);
     });
 
-    document.querySelectorAll('.icon').forEach((icon) => {
-			icon.addEventListener('click', (event)=>{
+    document.querySelectorAll(".icon").forEach((icon) => {
+      icon.addEventListener("click", (event) => {
         this.selectedIcon = event.target;
-        this.addElementOnBoard(event)
-        console.log(this.selectedIcon);
-        this.iconPopup.classList.toggle('show');
-
+        const box = this.selectedIcon.parentNode.getBoundingClientRect();
+        console.log(box);
+        this.addElementOnBoard(event, box.left, box.top);
+        this.iconPopup.classList.toggle("show");
       });
-		});
+    });
   }
-  
-  deleteShortLines(event) {
-    const shapeElementsToRemove = [];
-    for (const shape of this.shapes) {
-      const element = shape.element;
-      const x1 = Number(element.getAttribute("x1"));
-      const y1 = Number(element.getAttribute("y1"));
-      const x2 = Number(element.getAttribute("x2"));
-      const y2 = Number(element.getAttribute("y2"));
-      const distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
-      if (distance <= 2) {
-        shapeElementsToRemove.push(shape.element);
-        if(distance === 0){
-          this.iconPopup.classList.toggle('show');
-          console.log(event.pageX,event.pageY);
-          this.openIconPopup(event.pageX, event.pageY);
-        }
-      }
-    }
-    for (const element of shapeElementsToRemove) {
-      element.remove();
-      const index = this.shapes.findIndex(shape => shape.element === element);
-      if (index !== -1) {
-        this.shapes.splice(index, 1);
-      }
-    }
-  }
-
-
-addElementOnBoard(event){
-  const newElement = `<div class = 'element' style = "left: ${event.pageX}px; top: ${event.pageY}px"> ${this.selectedIcon.textContent} </div>`;
-  this.boardText.setAttribute("style", "display: none;");
-  this.element.innerHTML += newElement;
-}
-
-openIconPopup(x, y) {
-  // Set the position of the icon popup
-  this.iconPopup.style.left = (x+110) + "px";
-  this.iconPopup.style.top = (y) + "px";
-}
 
   highlightLines(x, y) {
     for (const shape of this.shapes) {
@@ -143,7 +112,7 @@ openIconPopup(x, y) {
     const length = Math.sqrt(dx * dx + dy * dy);
     const dotProduct = (x - x1) * (x2 - x1) + (y - y1) * (y2 - y1);
     const projection = dotProduct / (length * length);
-  
+
     let distance;
     //if projection is before line
     if (projection < 0) {
@@ -157,28 +126,34 @@ openIconPopup(x, y) {
     else {
       const projectionX = x1 + projection * (x2 - x1);
       const projectionY = y1 + projection * (y2 - y1);
-      distance = Math.sqrt((x - projectionX) * (x - projectionX) + (y - projectionY) * (y - projectionY));
+      distance = Math.sqrt(
+        (x - projectionX) * (x - projectionX) +
+          (y - projectionY) * (y - projectionY)
+      );
     }
-  
+
     return distance;
   }
-  
+
   startShape(x, y) {
     this.currentShape = new Shape(x, y);
     this.element.appendChild(this.currentShape.element);
   }
+
   updateShape(x, y) {
     if (this.currentShape !== null) {
       this.currentShape.addPoint(x, y);
     }
   }
+
   endShape() {
     if (this.currentShape !== null) {
       this.shapes.push(this.currentShape);
       this.currentShape = null;
     }
   }
-  eraseShapes(x, y) {
+
+  deleteShortLine(event) {
     const shapeElementsToRemove = [];
     for (const shape of this.shapes) {
       const element = shape.element;
@@ -186,11 +161,15 @@ openIconPopup(x, y) {
       const y1 = Number(element.getAttribute("y1"));
       const x2 = Number(element.getAttribute("x2"));
       const y2 = Number(element.getAttribute("y2"));
-      const distance = this.getPerpendicularDistance(x, y, x1, y1, x2, y2);
-      //console.log(distance);
+      const distance = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
       if (distance <= 20) {
         shapeElementsToRemove.push(shape.element);
-        //console.log(shapeElementsToRemove);
+        if (distance === 0) {
+          this.iconPopup.classList.toggle("show");
+          this.x = x1;
+          this.y = y1;
+          this.openIconPopup(event.offsetX, event.offsetY);
+        }
       }
     }
 
@@ -203,6 +182,67 @@ openIconPopup(x, y) {
     }
   }
 
+  addElementOnBoard(event) {
+    const newElement = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "g"
+    );
+    newElement.classList.add("icon-element");
+    newElement.setAttribute("transform", `translate(${this.x}, ${this.y})`);
+    newElement.setAttribute("style", "position: absolute;");
+
+    const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    txt.innerHTML = this.selectedIcon.textContent;
+    txt.setAttribute("text-anchor", "middle");
+
+    newElement.append(txt);
+
+    this.element.appendChild(newElement);
+
+    this.boardText.setAttribute("style", "display: none;");
+  }
+
+  openIconPopup(x, y) {
+    // Set the position of the icon popup
+    this.iconPopup.style.left = x + 102 + "px";
+    this.iconPopup.style.top = y + 42 + "px";
+  }
+
+  removeElements() {
+    // Get all elements with class "icon"
+    var icons = document.querySelectorAll(".icon-element");
+
+    // Loop through all the icons and add a click event listener to each one
+    icons.forEach(function (icon) {
+      icon.addEventListener("click", function () {
+        // Remove the icon from its parent container
+        icon.parentNode.removeChild(icon);
+      });
+    });
+  }
+
+  eraseShapes(x, y) {
+    const shapeElementsToRemove = [];
+    for (const shape of this.shapes) {
+      const element = shape.element;
+      const x1 = Number(element.getAttribute("x1"));
+      const y1 = Number(element.getAttribute("y1"));
+      const x2 = Number(element.getAttribute("x2"));
+      const y2 = Number(element.getAttribute("y2"));
+      const distance = this.getPerpendicularDistance(x, y, x1, y1, x2, y2);
+      if (distance <= 20) {
+        shapeElementsToRemove.push(shape.element);
+      }
+    }
+
+    for (const element of shapeElementsToRemove) {
+      element.remove();
+      const index = this.shapes.findIndex((shape) => shape.element === element);
+      if (index !== -1) {
+        this.shapes.splice(index, 1);
+      }
+    }
+  }
 }
 
 class Shape {
@@ -225,11 +265,11 @@ class Shape {
       const y2Other = lines[i].getAttribute("y2");
       const distanceStart = Math.sqrt((x - x1Other) ** 2 + (y - y1Other) ** 2);
       const distanceEnd = Math.sqrt((x - x2Other) ** 2 + (y - y2Other) ** 2);
-      if (distanceStart <= 2) {
+      if (distanceStart <= 10) {
         this.element.setAttribute("x1", x1Other);
         this.element.setAttribute("y1", y1Other);
       }
-      if (distanceEnd <= 2) {
+      if (distanceEnd <= 10) {
         this.element.setAttribute("x1", x2Other);
         this.element.setAttribute("y1", y2Other);
       }
@@ -248,11 +288,11 @@ class Shape {
       const y2Other = lines[i].getAttribute("y2");
       const distanceStart = Math.sqrt((x - x1Other) ** 2 + (y - y1Other) ** 2);
       const distanceEnd = Math.sqrt((x - x2Other) ** 2 + (y - y2Other) ** 2);
-      if (distanceStart <= 2) {
+      if (distanceStart <= 10) {
         this.element.setAttribute("x2", x1Other);
         this.element.setAttribute("y2", y1Other);
       }
-      if (distanceEnd <= 2) {
+      if (distanceEnd <= 10) {
         this.element.setAttribute("x2", x2Other);
         this.element.setAttribute("y2", y2Other);
       }
