@@ -6,3 +6,6 @@
 - [Day 5](https://github.com/Navin-Jethwani-76/Drawing-tool/commit/ff10072616faeb6400ea04fecf23ae2f83b97142)
 - [Day 6](https://github.com/Navin-Jethwani-76/Drawing-tool/commit/60d1325f2b0f5fbe7a5e5a4ce044257792abe4e7)
 - [Day 7](https://github.com/Navin-Jethwani-76/Drawing-tool/commit/011df6d73579573dc382e5ad862e1ee6ddcd88ef)
+- [Day 8](https://github.com/Navin-Jethwani-76/Drawing-tool/commit/e9cc5f0bfdd8241bb382118fd6ac50bd6bc17762)
+- [Day 9](https://github.com/Navin-Jethwani-76/Drawing-tool/commit/98637845a4fdc2ae8b45ceffb9f98f0d46dbf12f)
+- [Day 10](https://github.com/Navin-Jethwani-76/Drawing-tool/commit/985e514acf04ea92ddcd2fda799ed4154c9cd4ca)
