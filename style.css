@@ -67,3 +67,27 @@ svg > line{
   justify-content: center;
   align-items: center;
 }
+#undo-redo{
+  margin-left: 5px;
+}
+#undo-redo button{
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+  width: 30px;
+    height: 30px;
+    border: 1px solid black;
+}
+#undo-redo img{
+    width: 20px;
+    height: 20px;
+}
+#redo-button{
+  margin-top: 5px;
+}
+body{
+  display: flex;
+}
+.switch{
+  margin-left: 5px;
+}

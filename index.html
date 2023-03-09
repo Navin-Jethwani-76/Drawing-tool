@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
     <title>Document</title>
-  </head>
-  <body>
-    <div class="svg-wrap">
-      <span id="board-text">Click and drag to start drawing a structure.</span>
-      <svg id="board"></svg>
+</head>
+<body>
+
+    <div class="svg-wrap" id="svg-wrap">
+        <span id="board-text">Click and drag to start drawing a structure.</span>
+        <svg id="board"></svg>
     </div>
     <div class="switch">
       <img id="pencil-select" src="./icons/pencil.svg" alt="" />
       <img id="eraser-select" src="./icons/eraser.svg" alt="" />
     </div>
     <div id="icon-popup">
-      <div class="icon" data-icon="icon1">C</div>
-      <div class="icon" data-icon="icon2">H</div>
-      <div class="icon" data-icon="icon3">N</div>
+        <div class="icon" data-icon="icon1">C</div>
+        <div class="icon" data-icon="icon2">H</div>
+        <div class="icon" data-icon="icon3">N</div>
+    </div>
+    <div id="undo-redo">
+        <button id="undo-button"><img src="icons/undo.png" alt=""></button>
+        <button id="redo-button"><img src="icons/redo.jpg" alt=""></button>
     </div>
     <script src="script.js"></script>
-  </body>
+</body>
 </html>
