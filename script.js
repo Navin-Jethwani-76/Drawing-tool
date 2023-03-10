@@ -1,3 +1,4 @@
+
 class Draw{
 
   constructor(id){
@@ -7,7 +8,7 @@ class Draw{
       this.currentSymbol = null;
       this.boardText = document.getElementById('board-text');
       
-      this.mode = "popup";
+      this.mode = "";
       this.iconPopup = document.getElementById('icon-popup');
       this.selectedIcon = '';
   
@@ -40,7 +41,7 @@ class Draw{
         }
   
         if (this.mode == "pencil"){
-          this.mode = "popup";
+          this.mode = "";
           pencilSelect.classList.remove('clicked');
           this.element.setAttribute ('style',`cursor: default`);
         }
@@ -62,7 +63,7 @@ class Draw{
         }
   
         if (this.mode == "eraser"){
-          this.mode = "popup";
+          this.mode = "";
           eraseSelect.classList.remove('clicked');
           this.element.setAttribute ('style',`cursor: default`);
         }
@@ -81,12 +82,6 @@ class Draw{
           } 
           else if (this.mode === 'eraser'  && event.button === 0) {
             this.eraseShapes(event.offsetX, event.offsetY);
-          }
-          else{
-            this.iconPopup.classList.toggle('show');
-            this.x = event.pageX;
-            this.y = event.pageY;
-            this.openIconPopup(event.pageX, event.pageY, this.mode);
           }
         });
 
@@ -107,8 +102,8 @@ class Draw{
       document.querySelectorAll('.icon').forEach((icon) => {
         icon.addEventListener('click', (event)=>{
           this.selectedIcon = event.target;
-          this.currentSymbol = new Shape(this.x, this.y, 'popup', this.selectedIcon);
-          if(this.currentSymbol !== null){
+          this.currentSymbol = new Shape(this.x, this.y, '', this.selectedIcon);
+          if(this.currentSymbol){
             this.element.appendChild(this.currentSymbol.element);
             this.shapes.push(this.currentSymbol);
             this.undoRedo.pushState(this.shapes.slice());
@@ -118,7 +113,6 @@ class Draw{
     
           
           this.boardText.setAttribute("style", "display: none;");
-          // this.addElementOnBoard(event, this.x, this.y, this.mode, this.selectedIcon);
           this.iconPopup.classList.toggle('show');    
         });
       });
@@ -223,9 +217,7 @@ class Draw{
       if (this.currentShape !== null) {
         this.shapes.push(this.currentShape);
         this.currentShape = null;
-        this.undoRedo.pushState(this.shapes.slice());
       }
-      // this.undoRedo.pushState(this.shapes.slice());
   }
 
   deleteShortLine(event){
@@ -257,7 +249,6 @@ class Draw{
         this.shapes.splice(index, 1);
       }
     }
-    this.undoRedo.pushState(this.shapes.slice());
   }
   
   openIconPopup(x, y) {
@@ -302,7 +293,7 @@ class Draw{
     
     // restore the next state
     if (nextState) {
-      this.shapes = nextState;
+      this.shapes = nextState.slice();
       this.redraw();
     }
   }
@@ -316,6 +307,26 @@ class Draw{
   
     });
   }
+
+  appendEdge(){
+    for (const shape of this.shapes) {
+      const element = shape.element;
+      if(element!== undefined && element.tagName === 'line' ){
+        const x1 = Number(element.getAttribute("x1"));
+        const y1 = Number(element.getAttribute("y1"));
+        const x2 = Number(element.getAttribute("x2"));
+        const y2 = Number(element.getAttribute("y2"));
+        const distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+        console.log(`{
+          "x1":${x1},
+          "x2":${x2},
+          "y1":${y1},
+          "y2":${y2},
+          "length":${distance}
+        }`);
+      }
+      }
+    }
   
 }
 
@@ -352,7 +363,7 @@ class Shape {
             }
         }
       }
-      else if(mode === 'popup'){
+      else{
         this.element = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         this.element.setAttribute('transform', `translate(${x}, ${y})`)
         this.element.setAttribute("style", 'position: absolute;')
@@ -360,7 +371,7 @@ class Shape {
         this.txt = document.createElementNS('http://www.w3.org/2000/svg','text');
         this.txt.innerHTML = icon.textContent;
         this.txt.setAttribute('text-anchor', 'middle');
-      
+        this.txt.setAttribute("style", 'user-select : none;')
         this.element.append(this.txt);
       }
   }
