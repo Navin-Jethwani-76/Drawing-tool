@@ -85,9 +85,16 @@ svg > line{
 #redo-button{
   margin-top: 5px;
 }
-body{
+#app{
   display: flex;
 }
 .switch{
   margin-left: 5px;
 }
+.createLines input{
+  text-decoration: none;
+  width: 300px;
+  height: 200px;
+  margin-top: 5px;
+}
+
