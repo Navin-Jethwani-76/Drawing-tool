@@ -91,10 +91,10 @@ svg > line{
 .switch{
   margin-left: 5px;
 }
-.createLines input{
-  text-decoration: none;
-  width: 300px;
-  height: 200px;
+#jsonForm{
   margin-top: 5px;
+}
+#jsonForm input{
+  border: 1px solid black;
 }
 

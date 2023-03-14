@@ -13,19 +13,37 @@ class Draw {
     this.x;
     this.y;
 
-    const addLineButton = document.getElementById("addLines");
-    addLineButton.addEventListener("click", () => {
-      var jsonData = document.getElementById("json-input").value;
-      console.log(jsonData);
-      if (!jsonData) {
-        this.element.innerHTML = ``;
-        this.loadStaticJson();
-      } else {
-        this.element.innerHTML = ``;
-        this.loadDynamicJson(jsonData);
+    const jsonForm = document.getElementById("jsonForm");
+    jsonForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+    });
+    const parseButton = document.getElementById("parseButton");
+    parseButton.addEventListener("click", () => {
+      const fileInput = document.getElementById("jsonFileInput");
+      if (!fileInput.files[0]){
+        alert('No file chosen');
+      }
+      else{
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.addEventListener("load", (event) => {
+          const fileContent = event.target.result;
+          const json = JSON.parse(fileContent);
+          this.loadDynamicJson(json);
+        });
+        reader.readAsText(file);
       }
     });
     this.loadStaticJson();
+
+    const eraseDynamic = document.getElementById("redraw");
+    eraseDynamic.addEventListener("click", () => {
+      this.loadStaticJson();
+    });
+    const clearall = document.getElementById("clear-board");
+    clearall.addEventListener("click", () => {
+      this.element.innerHTML = ``;
+    });
 
     this.undoRedo = new UndoRedo();
     const undoButton = document.getElementById("undo-button");
@@ -127,16 +145,23 @@ class Draw {
   }
 
   loadDynamicJson(data) {
-    let jsonData = JSON.parse(data);
-    let lines = jsonData.edges;
+    this.element.innerHTML = ``;
+    let lines = data.edges;
     for (const line of lines) {
       this.startShape(line.x1, line.y1, "pencil");
       this.updateShape(line.x2, line.y2, "pencil");
       this.endShape();
     }
+    // let nodes = data.nodes;
+    // for (const node of nodes) {
+    //   if (node.isvisible) {
+    //     this.startShape(node.x, node.y, "", node.value);
+    //   }
+    // }
   }
 
   loadStaticJson() {
+    this.element.innerHTML = ``;
     fetch("data.json")
       .then((response) => {
         return response.json();
@@ -148,6 +173,12 @@ class Draw {
           this.updateShape(line.x2, line.y2, "pencil");
           this.endShape();
         }
+        // let nodes = obj.nodes;
+        // for (const node of nodes) {
+        //   if (node.isvisible) {
+        //     this.startShape(node.x, node.y, "", node.value);
+        //   }
+        // }
       });
   }
 
